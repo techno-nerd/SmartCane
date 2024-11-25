@@ -1,11 +1,13 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import HandleClick from './HandleClick';
 
 export default function CameraInput() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
-
+  const ref = useRef<CameraView>(null);
+  
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
@@ -23,7 +25,8 @@ export default function CameraInput() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} autofocus={'on'} />
+      <CameraView style={styles.camera} facing={facing} autofocus={'on'} ref={ref} />
+      <HandleClick cameraRef={ref}/>
     </View>
   );
 }
