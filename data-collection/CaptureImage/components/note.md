@@ -1,6 +1,6 @@
 ## SaveImage.js
 
-This script takes the image URI and sends it to the node server.
+This script takes the image URI and sends it to the node server. Single click means non-hazard, long press means hazard
 
 <b>Ensure</b>:
 1. The node server is running

@@ -1,7 +1,13 @@
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 
-export const saveImage = async (imageURI) => {
+/**
+ * 
+ * @param {*} imageURI URI of the image taken
+ * @param {String} hazard 'true' for hazard and 'false' for non-hazard
+ * @returns 
+ */
+export const saveImage = async (imageURI, hazard) => {
   const fileName = `image-${Date.now()}.jpg`;
   const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
@@ -20,7 +26,7 @@ export const saveImage = async (imageURI) => {
       name: fileName,
       type: fileType
     });
-    formData.append('hazard', 'true');
+    formData.append('hazard', hazard);
 
     // Send form data to backend server
     //Run ifconfig | grep inet

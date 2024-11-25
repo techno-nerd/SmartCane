@@ -3,23 +3,28 @@ import { CameraView, Camera, useCameraPermissions } from 'expo-camera';
 import deleteFile from './DeleteFile';
 import { saveImage } from './SaveImage';
 
+/**
+ * 
+ * @param cameraRef 
+ * @returns Component which saves image as non-hazard on click and hazard on long press
+ */
 function HandleClick({ cameraRef }: { cameraRef: React.RefObject<CameraView> }) {
+
+
+  const handleClick = async () => {
+    const photo = await cameraRef.current?.takePictureAsync();
+    saveImage(photo?.uri, 'false');
+    deleteFile(photo?.uri);
+  }
     
-    const handleClick = async () => {
-		console.log("Screen clicked");
-		if (cameraRef.current) {
-			console.log("Picture taken");
-			const photo = await cameraRef.current?.takePictureAsync();
-			console.log(photo?.uri);
-			const new_uri = saveImage(photo?.uri);
-      console.log(new_uri)
-			deleteFile(photo?.uri);
-      //deleteFile(new_uri);
-		}
-    };
+  const handleLongClick = async () => {
+    const photo = await cameraRef.current?.takePictureAsync();
+    saveImage(photo?.uri, 'true');
+    deleteFile(photo?.uri);
+  }
   
     return (
-      <TouchableWithoutFeedback onPress={handleClick}>
+      <TouchableWithoutFeedback onPress={handleClick} delayPressIn={0} onLongPress={handleLongClick}>
         <View style={styles.touchableArea} />
       </TouchableWithoutFeedback>
     );
