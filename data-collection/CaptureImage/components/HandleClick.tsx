@@ -2,6 +2,8 @@ import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-
 import { CameraView, Camera, useCameraPermissions } from 'expo-camera';
 import deleteFile from './DeleteFile';
 import { saveImage } from './SaveImage';
+import * as Speech from 'expo-speech';
+
 
 /**
  * 
@@ -13,12 +15,14 @@ function HandleClick({ cameraRef }: { cameraRef: React.RefObject<CameraView> }) 
 
   const handleClick = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
+    //Speech.speak("Picture of non-hazard");
     saveImage(photo?.uri, 'false');
     deleteFile(photo?.uri);
   }
     
   const handleLongClick = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
+    //Speech.speak("Picture of hazard");
     saveImage(photo?.uri, 'true');
     deleteFile(photo?.uri);
   }
