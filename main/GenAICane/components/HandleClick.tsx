@@ -1,34 +1,35 @@
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
-import { CameraView, Camera, useCameraPermissions } from 'expo-camera';
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { CameraView } from 'expo-camera';
 import deleteFile from './DeleteFile';
-import { saveImage } from './SaveImage';
+import { getDescription } from './GetPrediction';
 import * as Speech from 'expo-speech';
+import * as FileSystem from 'expo-file-system';
 
 
 /**
  * 
  * @param cameraRef 
- * @returns Component which saves image as non-hazard on click and hazard on long press
+ * @returns Component which generates and reads out a description of the surroundings
  */
 function HandleClick({ cameraRef }: { cameraRef: React.RefObject<CameraView> }) {
 
-
   const handleClick = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
-    //Speech.speak("Picture of non-hazard");
-    saveImage(photo?.uri, 'false');
-    deleteFile(photo?.uri);
+    if(photo) {
+      const base64 = await FileSystem.readAsStringAsync(photo.uri, { encoding: FileSystem.EncodingType.Base64 });
+      const description = await getDescription(base64);
+      Speech.speak(description.description);
+      deleteFile(photo?.uri);
+    }
+    else {
+      Speech.speak("Error: Could not take picture");
+    }
+    
   }
     
-  const handleLongClick = async () => {
-    const photo = await cameraRef.current?.takePictureAsync();
-    //Speech.speak("Picture of hazard");
-    saveImage(photo?.uri, 'true');
-    deleteFile(photo?.uri);
-  }
   
     return (
-      <TouchableWithoutFeedback onPress={handleClick} delayPressIn={0} onLongPress={handleLongClick}>
+      <TouchableWithoutFeedback onPress={handleClick}>
         <View style={styles.touchableArea} />
       </TouchableWithoutFeedback>
     );

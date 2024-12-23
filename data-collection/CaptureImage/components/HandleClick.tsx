@@ -1,8 +1,7 @@
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
-import { CameraView, Camera, useCameraPermissions } from 'expo-camera';
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { CameraView } from 'expo-camera';
 import deleteFile from './DeleteFile';
 import { saveImage } from './SaveImage';
-import * as Speech from 'expo-speech';
 
 
 /**
@@ -12,17 +11,20 @@ import * as Speech from 'expo-speech';
  */
 function HandleClick({ cameraRef }: { cameraRef: React.RefObject<CameraView> }) {
 
-
+  /**
+   * Saves image as non-hazard when screen is short clicked
+   */
   const handleClick = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
-    //Speech.speak("Picture of non-hazard");
     saveImage(photo?.uri, 'false');
     deleteFile(photo?.uri);
   }
-    
+  
+  /**
+   * Saves image as hazard when screen is long clicked
+   */
   const handleLongClick = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
-    //Speech.speak("Picture of hazard");
     saveImage(photo?.uri, 'true');
     deleteFile(photo?.uri);
   }

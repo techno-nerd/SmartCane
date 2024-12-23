@@ -1,6 +1,10 @@
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 
+//Run ifconfig | grep inet
+const SERVER_ADDRESS = "http://10.0.0.163:3000"
+
+
 /**
  * 
  * @param {*} imageURI URI of the image taken
@@ -27,10 +31,9 @@ export const saveImage = async (imageURI, hazard) => {
       type: fileType
     });
     formData.append('hazard', hazard);
-
-    // Send form data to backend server
-    //Run ifconfig | grep inet
-    await axios.post('http://10.0.0.163:3000/upload', formData, {
+   
+    
+    await axios.post(SERVER_ADDRESS+'/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

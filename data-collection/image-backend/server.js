@@ -43,7 +43,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
                 width: IMAGE_WIDTH,
                 height: IMAGE_WIDTH,
                 fit: sharp.fit.cover,
-                position: sharp.strategy.attention, // Use "attention" to crop around the most relevant part of the image
+                position: sharp.strategy.attention,
+                kernel: sharp.kernel.lanczos3
             })
             .toFile(newPath);
         
