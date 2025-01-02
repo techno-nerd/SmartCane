@@ -1,17 +1,15 @@
 import os
-import base64
-from io import BytesIO
-from PIL import Image, ImageOps
 import numpy as np
 import tensorflow as tf
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
-from tensorflow.keras.applications.efficientnet import preprocess_input
-import prompts
-import re
+import main.backend.utils as utils
 import json
+import base64
+from io import BytesIO
+from PIL import Image, ImageOps
 
 
 app = Flask(__name__)
@@ -33,32 +31,6 @@ def decode_base64_image(base64_string):
     return img
 
 
-def extract_json(response_text):
-    json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
-    if json_match:
-        return json_match.group(0)
-    else:
-        raise ValueError("No JSON object found in the response")
-
-
-def save_json(base64, description, hazard):
-    new_entry = {
-            "base64": base64,
-            "description": description,
-            "hazard": hazard
-    }
-
-    if os.path.exists('dump.json'):
-        with open('dump.json', 'r') as file:
-            dump_data = json.load(file)
-    else:
-        dump_data = []
-    
-    dump_data.append(new_entry)
-    with open('dump.json', 'w') as file:
-        json.dump(dump_data, file, indent=4)
-
-
 # Route to handle image prediction
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -73,8 +45,7 @@ def predict():
 
         # Step 3: Preprocess the image
         img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
-        img_array = preprocess_input(np.array(img))
-        img_array = np.expand_dims(img_array, axis=0)
+        img_array = np.expand_dims(np.array(img), axis=0)
 
         # Step 4: Make a prediction with the model
         prediction = model.predict(img_array)
@@ -98,33 +69,34 @@ def describe():
     
     data = request.get_json()
     chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "user",
-            "content": [
-                {"type": "text", 
-                 "text": prompts.JSON_PROMPT},
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{data['image']}",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", 
+                    "text": utils.JSON_PROMPT},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{data['image']}",
+                        },
                     },
-                },
-            ],
-        },
-    ],
-    model="llama-3.2-90b-vision-preview",
-    temperature=0,
+                ],
+            },
+        ],
+        model="llama-3.2-90b-vision-preview",
+        temperature=0,
     )
 
     message = chat_completion.choices[0].message.content
-    temp_json = json.loads(extract_json(message))
-    save_json(data['image'], temp_json['description'], temp_json['hazard'])
+    temp_json = json.loads(utils.extract_json(message))
+    utils.save_json(data['image'], temp_json['description'], temp_json['hazard'])
 
     try:
-        return jsonify(extract_json(message))
+        return jsonify(utils.extract_json(message))
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)
