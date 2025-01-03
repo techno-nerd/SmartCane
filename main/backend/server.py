@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
-import main.backend.utils as utils
+import utils
 import json
 import base64
 from io import BytesIO
@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 load_dotenv()
 
-IMAGE_SIZE = 528
+IMAGE_SIZE = 512
 
 model = tf.keras.models.load_model("../models/EfficientNET.keras")
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -25,9 +25,8 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 def decode_base64_image(base64_string):
     img_data = base64.b64decode(base64_string)
     img = Image.open(BytesIO(img_data))
-    img = img.convert('L')
+    img = img.convert('RGB')
     img = ImageOps.fit(img, (IMAGE_SIZE, IMAGE_SIZE), method=Image.Resampling.LANCZOS)
-    print(img.size)
     return img
 
 
@@ -36,27 +35,18 @@ def decode_base64_image(base64_string):
 def predict():
     print("Hit on /predict")
     try:
-        # Step 1: Get the base64 image from the request
         data = request.get_json()
         base64_image = data['image']
 
-        # Step 2: Decode the base64 image
         img = decode_base64_image(base64_image)
 
-        # Step 3: Preprocess the image
-        img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
         img_array = np.expand_dims(np.array(img), axis=0)
 
-        # Step 4: Make a prediction with the model
-        prediction = model.predict(img_array)
-
-        # Step 5: Process the model's output and prepare the response
-        predicted_class = np.argmax(prediction, axis=-1)
+        prediction = model.predict(img_array, verbose=0)
+        predicted_class = 1 if prediction[0][0] > 0.5 else 0
         
-        print(predicted_class)
-
         response = {
-            'prediction': str(predicted_class[0])
+            'prediction': str(predicted_class)
         }
 
         return jsonify(response)
