@@ -4,4 +4,3 @@ v_env
 .env
 __pycache__/
 dump.json
-models/
