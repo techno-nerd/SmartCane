@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import HandleClick from './HandleClick';
 import * as FileSystem from 'expo-file-system';
-import { getPrediction } from './GetPrediction';
+import { getDescription, getPrediction } from './GetPrediction';
+import * as Speech from 'expo-speech';
+
 
 /**Time in milliseconds between POST request to server for hazard detection */
 const STREAM_PERIOD = 2000;
@@ -22,6 +24,12 @@ export default function CameraInput() {
             const base64 = await FileSystem.readAsStringAsync(photo.uri, { encoding: FileSystem.EncodingType.Base64 });
             const hazard = await getPrediction(base64);
             console.log(hazard);
+            if(hazard == "1") {
+              Speech.speak("Hazard detected! Generating description now");
+              const description = await getDescription(base64);
+              Speech.speak(description.description);
+            }
+
           }
         }
       }, STREAM_PERIOD);
