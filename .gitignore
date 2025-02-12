@@ -4,3 +4,5 @@ v_env
 .env
 __pycache__/
 dump.json
+saved_images/
+test.ipynb

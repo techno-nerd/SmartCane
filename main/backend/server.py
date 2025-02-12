@@ -33,7 +33,6 @@ def decode_base64_image(base64_string):
 # Route to handle image prediction
 @app.route('/predict', methods=['POST'])
 def predict():
-    print("Hit on /predict")
     try:
         data = request.get_json()
         base64_image = data['image']
@@ -51,12 +50,12 @@ def predict():
 
         return jsonify(response)
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 400
 
 
 @app.route('/describe', methods=['POST'])
 def describe():
-    
     data = request.get_json()
     chat_completion = client.chat.completions.create(
         messages=[
@@ -90,3 +89,13 @@ def describe():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)
+
+
+# Dummy response for testing purposes
+"""
+dummy_response = ""{
+            "description": "This is a dummy description for testing purposes. I have made this very very very very very very long to check the timing",
+            "hazard": "false"
+        }""
+    return jsonify(utils.extract_json(dummy_response))
+"""

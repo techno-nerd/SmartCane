@@ -1,5 +1,8 @@
+import { resizeBase64Image } from './ImageUtils';
 
-const SERVER_ADDRESS = "http://10.0.0.163:8000"
+
+const SERVER_ADDRESS = "http://172.20.10.2:8000"
+
 
 const getPrediction = async (base64) => {
   const response = await fetch(SERVER_ADDRESS+'/predict', {
@@ -7,7 +10,7 @@ const getPrediction = async (base64) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ "image": base64 }),
+    body: JSON.stringify({ "image": await resizeBase64Image(base64) }),
   });
 
   if (response.ok) {
@@ -27,7 +30,7 @@ const getDescription = async (base64) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ "image": base64 }),
+    body: JSON.stringify({ "image": await resizeBase64Image(base64) }),
   });
 
   if (response.ok) {

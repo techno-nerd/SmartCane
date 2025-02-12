@@ -2,8 +2,8 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 
 //Run ifconfig | grep inet
-//const SERVER_ADDRESS = "http://10.0.0.163:3000"
-const SERVER_ADDRESS = "http://172.20.10.2:3000"
+const SERVER_ADDRESS = "http://10.0.0.163:3000"
+//const SERVER_ADDRESS = "http://172.20.10.2:3000"
 
 /**
  * 
