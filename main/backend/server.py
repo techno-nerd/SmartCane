@@ -42,6 +42,7 @@ def predict():
         img_array = np.expand_dims(np.array(img), axis=0)
 
         prediction = model.predict(img_array, verbose=0)
+        print(prediction[0][0])
         predicted_class = 1 if prediction[0][0] > 0.5 else 0
         
         response = {
@@ -89,13 +90,3 @@ def describe():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)
-
-
-# Dummy response for testing purposes
-"""
-dummy_response = ""{
-            "description": "This is a dummy description for testing purposes. I have made this very very very very very very long to check the timing",
-            "hazard": "false"
-        }""
-    return jsonify(utils.extract_json(dummy_response))
-"""
