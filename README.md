@@ -20,7 +20,8 @@ The `data-collection` folder has two subfolders
 
 The `main` folder has several folders
 1. `backend` is the Flask server, which will handle the hazard detection (using a fine-tuned CNN) and description (using `llama-3.2-90b-vision-preview` through Groq API) <br>
-        - `Python 3.12.7` is recommended. `pip install -r requirements.txt`, ideally using a virtual environment
-2. `GenAICane` is the Expo App, which is to be used through Expo Go
+        - `Python 3.12.7` is recommended
+        - Install dependencies using: `pip install -r requirements.txt`
+2. `GenAICane` is the Expo App, which is to be used through Expo Go. Details on setting up the Expo app are in this folder's `README.md` file 
 3. `model-training` consists of the Jupyter notebooks used to fine-tune and evaluate the different CNN architectures
 4. `models` contains the fine-tuned model files in `.keras` format

@@ -4,6 +4,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const IS_DESCRIBING_KEY = 'isDescribing';
 const TIME_DESCRIBED_KEY = 'timeDescribed';
 
+// Function to initialize isDescribing to false if not set
+export const initializeStorage = async () => {
+    await AsyncStorage.setItem(IS_DESCRIBING_KEY, JSON.stringify(false));
+    await AsyncStorage.setItem(TIME_DESCRIBED_KEY, JSON.stringify(0));
+
+    console.log('Initialized');
+};
+
 // Function to store isDescribing boolean
 export const setIsDescribing = async (value: boolean) => {
   try {
